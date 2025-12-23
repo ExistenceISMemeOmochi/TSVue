@@ -5,16 +5,15 @@ import { ref, onMounted } from 'vue'
 const posts = ref<{ id: number; title: string; content: string }[]>([])
 const loading = ref(true)
 
+// src/App.vue の fetchPosts 部分を書き換え
 const fetchPosts = async () => {
   try {
-    // 将来はここが '/api/posts' (Cloudflare Functions) になる！
-    // 今は練習として、少し待ってから仮のデータを出すよ
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    posts.value = [
-      { id: 1, title: "初投稿！", content: "RustからTypeScriptに引っ越してきました。" },
-      { id: 2, title: "Cloudflare D1への野望", content: "次はDBを繋いで、本当のブログにするぞ。" }
-    ]
+    // さっき作った functions/api/posts.ts を見に行くよ
+    const response = await fetch('/api/posts')
+    const data = await response.json()
+    posts.value = data
+  } catch (e) {
+    console.error("データの取得に失敗しちゃった：", e)
   } finally {
     loading.value = false
   }
